@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 
+// Define validation schema using Yup
 const validationSchema = Yup.object().shape({
   username: Yup.string()
     .min(4, 'Username must be at least 4 characters long')
@@ -19,16 +20,23 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddUserForm = ({ fetchUsers }) => {
+  // Handle form submission
   const handleSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
     try {
+      // Validate form values against the defined schema
       await validationSchema.validate(values, { abortEarly: false });
 
+      // Send a POST request to add the user data
       await axios.post('http://localhost:3000/users', values);
 
+      // Reset the form fields to their initial values
       resetForm();
+      
+      // Fetch updated users after adding a new user
       fetchUsers();
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
+        // If there are validation errors, set the form errors accordingly
         const validationErrors = {};
         error.inner.forEach((validationError) => {
           validationErrors[validationError.path] = validationError.message;
@@ -38,7 +46,8 @@ const AddUserForm = ({ fetchUsers }) => {
         console.error(error);
       }
     }
-
+    
+    // Set submitting to false once the form submission is complete
     setSubmitting(false);
   };
 

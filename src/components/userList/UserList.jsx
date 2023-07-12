@@ -3,47 +3,45 @@ import { Button, Container, Table, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
 
 const UserList = ({ users, setUsers }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false); // State to control the visibility of the modal
+  const [selectedUser, setSelectedUser] = useState(null); // State to store the selected user for update
 
   const handleDelete = async (userId) => {
     try {
       await axios.delete(`http://localhost:3000/users/${userId}`);
-      setUsers(users.filter((user) => user.id !== userId));
+      setUsers(users.filter((user) => user.id !== userId)); // Update the users state by removing the deleted user
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleUpdate = (user) => {
-    setSelectedUser(user);
-    setShowModal(true);
+    setSelectedUser(user); // Set the selected user to be updated
+    setShowModal(true); // Show the modal for updating user details
   };
 
   const handleCloseModal = () => {
-    setSelectedUser(null);
-    setShowModal(false);
+    setSelectedUser(null); // Reset the selected user
+    setShowModal(false); // Close the modal
   };
-
 
   const handleSaveChanges = async () => {
     try {
-      await axios.put(`http://localhost:3000/users/${selectedUser.id}`, selectedUser);
+      await axios.put(`http://localhost:3000/users/${selectedUser.id}`, selectedUser); // Send a PUT request to the server to update the user
       const updatedUsers = users.map((user) =>
         user.id === selectedUser.id ? selectedUser : user
-      );
+      ); // Update the users state with the updated user details
       setUsers(updatedUsers);
-      setShowModal(false);
-      setSelectedUser(null);
+      setShowModal(false); // Close the modal
+      setSelectedUser(null); // Reset the selected user
     } catch (error) {
       console.error(error);
     }
   };
-  
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setSelectedUser((prevUser) => ({ ...prevUser, [name]: value }));
+    setSelectedUser((prevUser) => ({ ...prevUser, [name]: value })); // Update the selected user's field values when input changes
   };
 
   return (
